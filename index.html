@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Nghiên cứu thiết kế và phát triển Robot trợ lý nông nghiệp trong nhà kính sử dụng công nghệ Vision-Language Navigation tại Việt Nam">
+  <title>VLN AgriBot — Robot Trợ Lý Nông Nghiệp Thông Minh</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="particles"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="16" stroke="#10b981" stroke-width="2"/><path d="M12 22c1-4 4-8 6-8s5 4 6 8" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="11" r="3" fill="#10b981"/></svg>
+        <span>VLN AgriBot</span>
+      </a>
+      <button class="nav-toggle">☰</button>
+      <ul class="nav-links">
+        <li><a href="#problem">Đặt Vấn Đề</a></li>
+        <li><a href="#solution">Giải Pháp</a></li>
+        <li><a href="#value">Giá Trị</a></li>
+        <li><a href="#scenario">Kịch Bản</a></li>
+        <li><a href="#conclusion">Tổng Kết</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span> Nghiên Cứu Khoa Học 2026</div>
+      <h1>Thiết Kế &amp; Phát Triển <br><span class="gradient-text">Robot Trợ Lý Nông Nghiệp</span><br>Trong Nhà Kính Thông Minh</h1>
+      <p>Ứng dụng công nghệ Vision-Language Navigation (VLN) kết hợp AI, Computer Vision và ROS 2 để xây dựng robot tự hành hỗ trợ nông nghiệp trong nhà kính tại Việt Nam.</p>
+      <div class="hero-actions">
+        <a href="#solution" class="btn btn-primary">🔬 Khám Phá Giải Pháp</a>
+        <a href="#scenario" class="btn btn-outline">📋 Xem Kịch Bản</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHẦN 1: ĐẶT VẤN ĐỀ -->
+  <section class="section" id="problem">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">📌 Phần 01</div>
+        <h2 class="section-title">Đặt Vấn Đề</h2>
+        <p class="section-desc">Nông nghiệp trong nhà kính tại Việt Nam đang đối mặt với nhiều thách thức lớn trong bối cảnh chuyển đổi số và hội nhập quốc tế.</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card reveal reveal-delay-1">
+          <div class="card-icon">👨‍🌾</div>
+          <h3>Thiếu Hụt Nhân Lực Trầm Trọng</h3>
+          <p>Lao động nông nghiệp tại Việt Nam giảm từ <span class="stat-highlight">~70%</span> xuống còn <span class="stat-highlight">~27%</span> trong hai thập kỷ qua. Thế hệ trẻ không còn mặn mà với công việc đồng áng truyền thống.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-2">
+          <div class="card-icon">🌡️</div>
+          <h3>Điều Kiện Làm Việc Khắc Nghiệt</h3>
+          <p>Nhiệt độ trong nhà kính có thể lên tới <span class="stat-highlight">45–50°C</span>. Công nhân phải tiếp xúc với thuốc bảo vệ thực vật, dẫn đến các bệnh nghề nghiệp và giảm năng suất lao động.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-3">
+          <div class="card-icon">📊</div>
+          <h3>Quản Lý Thủ Công, Thiếu Dữ Liệu</h3>
+          <p>Hầu hết nhà kính tại Việt Nam vẫn vận hành bằng kinh nghiệm cá nhân. Việc giám sát sâu bệnh, tưới nước, bón phân chủ yếu <span class="stat-highlight">dựa vào cảm tính</span> mà không có dữ liệu khoa học.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-4">
+          <div class="card-icon">🤖</div>
+          <h3>Robot Hiện Tại Chưa Đủ "Thông Minh"</h3>
+          <p>Các robot nông nghiệp hiện có thường chỉ đi theo lộ trình cố định, <span class="stat-highlight">không hiểu ngôn ngữ tự nhiên</span> và không thể linh hoạt xử lý tình huống phức tạp trong môi trường thực tế.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-1">
+          <div class="card-icon">🔗</div>
+          <h3>Thiếu Tích Hợp AI & IoT</h3>
+          <p>Công nghệ AI, IoT và robotics đã phát triển mạnh trên thế giới nhưng việc tích hợp chúng vào hệ thống nông nghiệp nhà kính tại Việt Nam vẫn còn <span class="stat-highlight">rất hạn chế</span>.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-2">
+          <div class="card-icon">🎯</div>
+          <h3>Câu Hỏi Nghiên Cứu</h3>
+          <p>Làm thế nào để xây dựng một robot có khả năng <span class="stat-highlight">hiểu lệnh giọng nói</span>, tự nhìn-hiểu-di chuyển trong nhà kính, và thực thi các tác vụ nông nghiệp một cách tự động?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHẦN 2: GIẢI PHÁP ĐỘT PHÁ -->
+  <section class="section" id="solution" style="background: linear-gradient(180deg, var(--bg-primary), rgba(16,185,129,0.02), var(--bg-primary));">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">🚀 Phần 02</div>
+        <h2 class="section-title">Giải Pháp Đột Phá</h2>
+        <p class="section-desc">Ứng dụng Vision-Language Navigation (VLN) — cho phép robot hiểu ngôn ngữ tự nhiên, nhìn môi trường và tự điều hướng để thực thi tác vụ nông nghiệp.</p>
+      </div>
+
+      <!-- Workflow Visual -->
+      <div class="workflow-visual reveal">
+        <div class="workflow-title">🔄 Luồng Hoạt Động Hệ Thống (System Workflow)</div>
+        <div class="workflow-steps">
+          <div class="workflow-step">
+            <div class="step-number green">1</div>
+            <div class="step-content">
+              <h4>🎤 Người dùng ra lệnh bằng giọng nói</h4>
+              <p>Nông dân nói lệnh bằng tiếng Việt. Whisper (Speech-to-Text) chuyển giọng nói thành văn bản chính xác.</p>
+              <div class="step-tech"><span class="tech-badge green">Whisper</span><span class="tech-badge green">Speech-to-Text</span></div>
+            </div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="workflow-step">
+            <div class="step-number cyan">2</div>
+            <div class="step-content">
+              <h4>🧠 LLM hiểu ý định & lập kế hoạch</h4>
+              <p>Mô hình ngôn ngữ lớn (LLM) phân tích văn bản để trích xuất Intent, Object, Location. Task Planner tạo kịch bản JSON cho chuỗi hành động.</p>
+              <div class="step-tech"><span class="tech-badge cyan">LLM – NLU</span><span class="tech-badge cyan">Task Planner</span><span class="tech-badge cyan">JSON Script</span></div>
+            </div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="workflow-step">
+            <div class="step-number blue">3</div>
+            <div class="step-content">
+              <h4>👁️ Thị giác & Bản đồ — Xác định mục tiêu</h4>
+              <p>Camera RGB-D + YOLOv8/OpenCV nhận diện cây trồng, chướng ngại vật. Đồng thời xây dựng bản đồ SLAM để định vị robot trong nhà kính.</p>
+              <div class="step-tech"><span class="tech-badge blue">Camera RGB-D</span><span class="tech-badge blue">YOLOv8</span><span class="tech-badge blue">OpenCV</span><span class="tech-badge blue">SLAM</span></div>
+            </div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="workflow-step">
+            <div class="step-number purple">4</div>
+            <div class="step-content">
+              <h4>🗺️ Điều hướng VLN & Thực thi</h4>
+              <p>Kết hợp ngôn ngữ + thị giác để điều hướng (VLN). Path Planning tránh vật cản bằng Nav2. ROS 2 Middleware giao tiếp với vi điều khiển ESP32/STM32 điều khiển động cơ và công cụ (khoan đất, bơm nước, bật đèn).</p>
+              <div class="step-tech"><span class="tech-badge purple">VLN Navigation</span><span class="tech-badge purple">Nav2</span><span class="tech-badge purple">ROS 2</span><span class="tech-badge purple">ESP32/STM32</span></div>
+            </div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="workflow-step">
+            <div class="step-number lime">5</div>
+            <div class="step-content">
+              <h4>📡 Phản hồi vòng lặp & Báo cáo</h4>
+              <p>Cảm biến IoT & Camera đánh giá kết quả. Nếu thất bại → lên kế hoạch lại. Nếu thành công → LLM tóm tắt báo cáo và phát âm thanh qua loa.</p>
+              <div class="step-tech"><span class="tech-badge green">IoT Sensors</span><span class="tech-badge green">Feedback Loop</span><span class="tech-badge green">LLM Report</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kiến thức áp dụng -->
+      <h3 class="reveal" style="text-align:center; margin-bottom:1.5rem; font-size:1.4rem;">🎓 Kiến Thức Cốt Lõi Được Áp Dụng</h3>
+      <div class="knowledge-grid">
+        <div class="knowledge-card reveal reveal-delay-1">
+          <h4>🗣️ Xử Lý Ngôn Ngữ Tự Nhiên (NLP)</h4>
+          <p>Whisper chuyển giọng nói → văn bản. LLM (GPT/LLaMA) hiểu ngữ nghĩa, trích xuất ý định hành động, đối tượng và vị trí mục tiêu.</p>
+        </div>
+        <div class="knowledge-card reveal reveal-delay-2">
+          <h4>👁️ Thị Giác Máy Tính (Computer Vision)</h4>
+          <p>YOLOv8 phát hiện đối tượng real-time. Camera RGB-D cung cấp thông tin chiều sâu. SLAM xây dựng bản đồ 3D môi trường.</p>
+        </div>
+        <div class="knowledge-card reveal reveal-delay-3">
+          <h4>🧭 Vision-Language Navigation (VLN)</h4>
+          <p>Kết hợp đa phương thức: ngôn ngữ + hình ảnh → quyết định điều hướng. Đây là lõi đột phá cho phép robot "hiểu" và "thấy" cùng lúc.</p>
+        </div>
+        <div class="knowledge-card reveal reveal-delay-4">
+          <h4>⚙️ Robotics & Hệ Thống Nhúng</h4>
+          <p>ROS 2 làm middleware giao tiếp. Nav2 cho path planning. ESP32/STM32 điều khiển phần cứng: motor, bơm nước, đèn, khoan đất.</p>
+        </div>
+      </div>
+
+      <!-- Vì sao lại vậy? -->
+      <div class="workflow-visual reveal" style="margin-top:3rem; border-left: 3px solid var(--accent-cyan);">
+        <div class="workflow-title">💡 Vì Sao VLN Là Giải Pháp Đột Phá?</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap:1.5rem;">
+          <div style="padding:1rem;">
+            <h4 style="color:var(--accent-emerald); margin-bottom:0.5rem;">✅ Tương tác tự nhiên</h4>
+            <p style="color:var(--text-secondary); font-size:0.9rem;">Nông dân không cần biết lập trình, chỉ cần nói tiếng Việt — robot hiểu và hành động.</p>
+          </div>
+          <div style="padding:1rem;">
+            <h4 style="color:var(--accent-emerald); margin-bottom:0.5rem;">✅ Đa phương thức (Multimodal)</h4>
+            <p style="color:var(--text-secondary); font-size:0.9rem;">Kết hợp đồng thời ngôn ngữ + thị giác, vượt trội so với robot chỉ dùng cảm biến đơn lẻ.</p>
+          </div>
+          <div style="padding:1rem;">
+            <h4 style="color:var(--accent-emerald); margin-bottom:0.5rem;">✅ Thích ứng linh hoạt</h4>
+            <p style="color:var(--text-secondary); font-size:0.9rem;">Không cần lập trình lại khi thay đổi layout nhà kính hay loại cây trồng mới.</p>
+          </div>
+          <div style="padding:1rem;">
+            <h4 style="color:var(--accent-emerald); margin-bottom:0.5rem;">✅ Mã nguồn mở</h4>
+            <p style="color:var(--text-secondary); font-size:0.9rem;">Xây dựng trên ROS 2, YOLOv8, Whisper — giảm chi phí, tăng khả năng mở rộng & cộng đồng hỗ trợ.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHẦN 3: GIÁ TRỊ THỰC TIỄN -->
+  <section class="section" id="value">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">🏆 Phần 03</div>
+        <h2 class="section-title">Giá Trị Thực Tiễn Cho Việt Nam</h2>
+        <p class="section-desc">Dự án không chỉ mang giá trị học thuật mà còn tạo ra tác động thực tế trong khoa học, công nghệ và kinh tế nông nghiệp Việt Nam.</p>
+      </div>
+      <div class="value-grid">
+        <div class="value-card reveal reveal-delay-1">
+          <div class="card-icon" style="background:rgba(59,130,246,0.1);">🔬</div>
+          <h3>Giá Trị Khoa Học</h3>
+          <p>Đóng góp vào lĩnh vực VLN ứng dụng trong nông nghiệp — một hướng nghiên cứu mới tại Việt Nam.</p>
+          <ul>
+            <li>Xây dựng bộ dataset tiếng Việt cho VLN nông nghiệp</li>
+            <li>Nghiên cứu tích hợp đa phương thức trong môi trường thực tế</li>
+            <li>Đề xuất mô hình VLN phù hợp nhà kính Việt Nam</li>
+          </ul>
+        </div>
+        <div class="value-card reveal reveal-delay-2">
+          <div class="card-icon" style="background:rgba(139,92,246,0.1);">💻</div>
+          <h3>Giá Trị Công Nghệ</h3>
+          <p>Tạo nền tảng phần mềm và phần cứng mở cho cộng đồng robotics Việt Nam.</p>
+          <ul>
+            <li>Hệ thống ROS 2 hoàn chỉnh cho robot nông nghiệp</li>
+            <li>Pipeline AI: Speech → NLU → Vision → Navigation → Action</li>
+            <li>Thiết kế phần cứng với linh kiện có sẵn trong nước</li>
+          </ul>
+        </div>
+        <div class="value-card reveal reveal-delay-3">
+          <div class="card-icon" style="background:rgba(16,185,129,0.1);">🌾</div>
+          <h3>Giá Trị Nông Nghiệp</h3>
+          <p>Giải quyết bài toán thiếu lao động và nâng cao năng suất canh tác trong nhà kính.</p>
+          <ul>
+            <li>Giảm 40–60% nhân công cho các tác vụ lặp lại</li>
+            <li>Tăng năng suất nhờ giám sát 24/7 liên tục</li>
+            <li>Phát hiện sâu bệnh sớm, giảm tổn thất mùa vụ</li>
+          </ul>
+        </div>
+        <div class="value-card reveal reveal-delay-4">
+          <div class="card-icon" style="background:rgba(6,182,212,0.1);">🇻🇳</div>
+          <h3>Giá Trị Quốc Gia</h3>
+          <p>Phù hợp chiến lược chuyển đổi số nông nghiệp và phát triển AI của Chính phủ Việt Nam.</p>
+          <ul>
+            <li>Đóng góp vào Chương trình KHCN nông nghiệp công nghệ cao</li>
+            <li>Xây dựng nguồn nhân lực AI + Robotics</li>
+            <li>Tiềm năng thương mại hóa & xuất khẩu công nghệ</li>
+          </ul>
+        </div>
+        <div class="value-img-card reveal">
+          <div>
+            <h3 style="font-size:1.3rem; margin-bottom:1rem;">🌍 Tầm Nhìn Dài Hạn</h3>
+            <p style="color:var(--text-secondary); font-size:0.95rem; margin-bottom:1rem;">Hướng đến việc xây dựng một hệ sinh thái robot nông nghiệp thông minh "Made in Vietnam", có khả năng mở rộng từ nhà kính đến ngoài trời, từ cây rau đến cây công nghiệp.</p>
+            <p style="color:var(--text-secondary); font-size:0.95rem;">Kết hợp AI, IoT, Big Data để tạo nên nền nông nghiệp số — nơi robot là "người bạn đồng hành" của nông dân Việt Nam.</p>
+          </div>
+          <img src="assets/vietnam_agriculture.png" alt="Nông nghiệp công nghệ cao Việt Nam">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHẦN 4: KỊCH BẢN ỨNG DỤNG -->
+  <section class="section" id="scenario" style="background: linear-gradient(180deg, var(--bg-primary), rgba(6,182,212,0.02), var(--bg-primary));">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">🎬 Phần 04</div>
+        <h2 class="section-title">Kịch Bản Ứng Dụng Trong Nhà Kính</h2>
+        <p class="section-desc">Mô phỏng một ngày làm việc thực tế của robot VLN AgriBot trong môi trường nhà kính trồng cà chua tại Đà Lạt.</p>
+      </div>
+
+      <div class="scenario-timeline">
+        <div class="scenario-item reveal">
+          <div class="scenario-dot">🌅</div>
+          <div class="scenario-content">
+            <div class="scenario-time">06:00 — Sáng sớm</div>
+            <h4>Tuần tra & Giám sát tổng quan</h4>
+            <p>Robot tự khởi động, di chuyển dọc các luống cây, chụp ảnh toàn bộ khu vực trồng. Camera RGB-D ghi nhận tình trạng cây, đánh dấu vị trí bất thường.</p>
+            <div class="scenario-dialogue">🗣️ "Hãy đi kiểm tra toàn bộ khu vực A và báo cáo tình trạng cây."</div>
+          </div>
+        </div>
+        <div class="scenario-item reveal">
+          <div class="scenario-dot">💧</div>
+          <div class="scenario-content">
+            <div class="scenario-time">08:00 — Buổi sáng</div>
+            <h4>Tưới nước tự động theo vùng</h4>
+            <p>Dựa trên dữ liệu cảm biến độ ẩm đất, robot di chuyển đến các luống khô và kích hoạt hệ thống bơm nước tích hợp.</p>
+            <div class="scenario-dialogue">🗣️ "Tưới nước cho hàng cà chua số 3 đến số 7, mỗi hàng 2 lít."</div>
+          </div>
+        </div>
+        <div class="scenario-item reveal">
+          <div class="scenario-dot">🔍</div>
+          <div class="scenario-content">
+            <div class="scenario-time">10:00 — Giữa sáng</div>
+            <h4>Phát hiện & Xử lý sâu bệnh</h4>
+            <p>YOLOv8 phát hiện lá vàng và đốm bệnh trên cà chua. Robot đánh dấu vị trí, chụp ảnh cận cảnh, và phun thuốc sinh học chính xác vào khu vực bị ảnh hưởng.</p>
+            <div class="scenario-dialogue">🗣️ "Kiểm tra lá cây ở hàng 5, nếu phát hiện sâu thì phun thuốc."</div>
+          </div>
+        </div>
+        <div class="scenario-item reveal">
+          <div class="scenario-dot">🌱</div>
+          <div class="scenario-content">
+            <div class="scenario-time">14:00 — Chiều</div>
+            <h4>Thu hoạch & Phân loại</h4>
+            <p>Robot nhận diện quả cà chua chín (dựa trên màu sắc & kích thước), sử dụng cánh tay robot nhẹ nhàng hái và phân loại vào các khay theo chất lượng.</p>
+            <div class="scenario-dialogue">🗣️ "Thu hoạch cà chua chín ở khu vực B, phân loại loại 1 và loại 2."</div>
+          </div>
+        </div>
+        <div class="scenario-item reveal">
+          <div class="scenario-dot">📊</div>
+          <div class="scenario-content">
+            <div class="scenario-time">17:00 — Cuối ngày</div>
+            <h4>Tổng kết & Báo cáo</h4>
+            <p>Robot tổng hợp dữ liệu cả ngày: số cây đã kiểm tra, lượng nước đã tưới, sâu bệnh phát hiện, sản lượng thu hoạch. LLM tạo báo cáo tóm tắt bằng tiếng Việt.</p>
+            <div class="scenario-dialogue">🤖 "Báo cáo: Đã kiểm tra 450 cây, tưới 280L nước, phát hiện 12 cây bệnh đốm lá, thu hoạch 35kg cà chua loại 1."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHẦN 5: TỔNG KẾT -->
+  <section class="section conclusion" id="conclusion">
+    <div class="container">
+      <div class="conclusion-content reveal">
+        <div class="section-label">✨ Phần 05</div>
+        <h2>Tổng Kết</h2>
+        <div class="conclusion-stats">
+          <div class="stat-item">
+            <div class="stat-value" data-count="5" data-suffix="+">0+</div>
+            <div class="stat-label">Công nghệ AI tích hợp</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" data-count="60" data-suffix="%">0%</div>
+            <div class="stat-label">Giảm nhân công lao động</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" data-count="24" data-suffix="/7">0/7</div>
+            <div class="stat-label">Giám sát liên tục</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" data-count="100" data-suffix="%">0%</div>
+            <div class="stat-label">Mã nguồn mở</div>
+          </div>
+        </div>
+        <p class="conclusion-text">
+          VLN AgriBot là bước đột phá trong việc kết hợp <strong>trí tuệ nhân tạo</strong>, <strong>thị giác máy tính</strong> và <strong>robotics</strong> vào nông nghiệp nhà kính tại Việt Nam. Bằng cách cho phép robot hiểu ngôn ngữ tự nhiên và tự điều hướng bằng thị giác, chúng tôi mở ra một kỷ nguyên mới cho nông nghiệp thông minh — nơi <strong>công nghệ phục vụ con người</strong> và <strong>nông dân là trung tâm</strong>.
+        </p>
+        <div class="hero-actions">
+          <a href="#hero" class="btn btn-primary">⬆️ Về Đầu Trang</a>
+          <a href="#solution" class="btn btn-outline">🔬 Xem Lại Giải Pháp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2026 VLN AgriBot Research Project — Indoor Farming Assistant Robot | Việt Nam 🇻🇳</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

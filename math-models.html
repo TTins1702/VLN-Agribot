@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mô Hình Toán Học — VLN AgriBot</title>
+  <!-- KaTeX CSS & JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ==================== RESET & BASE ==================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-primary: #0a0f1a;
+      --bg-card: rgba(15, 23, 42, 0.7);
+      --bg-card-hover: rgba(20, 30, 55, 0.85);
+      --bg-formula: rgba(16, 185, 129, 0.04);
+      --border: rgba(148, 163, 184, 0.08);
+      --border-accent: rgba(16, 185, 129, 0.2);
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-dim: #64748b;
+      --accent-emerald: #10b981;
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(16,185,129,0.06), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6,182,212,0.05), transparent),
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(139,92,246,0.03), transparent);
+    }
+    ::selection { background: rgba(16,185,129,0.3); }
+
+    /* ==================== LAYOUT ==================== */
+    .page-wrapper { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* ==================== HERO HEADER ==================== */
+    .hero-header {
+      text-align: center;
+      padding: 3.5rem 2rem 3rem;
+      margin-bottom: 3rem;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.06), rgba(139,92,246,0.05));
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 40%, rgba(16,185,129,0.1), transparent 60%);
+    }
+    .hero-header * { position: relative; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border-radius: 100px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.2);
+      color: var(--accent-emerald);
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.03em;
+      margin-bottom: 1.2rem;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-emerald); animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+    .hero-header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 0.8rem;
+    }
+    .hero-header h1 span {
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-header p { color: var(--text-secondary); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+
+    /* ==================== NAV SIDEBAR (Table of contents) ==================== */
+    .toc {
+      position: fixed; top: 50%; right: 1.5rem; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 0.35rem; z-index: 100;
+    }
+    .toc a {
+      display: block;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      opacity: 0.4;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .toc a:hover, .toc a.active { opacity: 1; background: var(--accent-emerald); transform: scale(1.4); }
+    .toc a::after {
+      content: attr(data-label);
+      position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+      white-space: nowrap; font-size: 0.72rem; color: var(--text-secondary);
+      background: var(--bg-card); padding: 0.2rem 0.6rem; border-radius: 6px;
+      border: 1px solid var(--border); opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .toc a:hover::after { opacity: 1; }
+
+    /* ==================== OVERVIEW TABLE ==================== */
+    .overview-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.88rem;
+    }
+    .overview-table th {
+      background: rgba(16,185,129,0.08);
+      color: var(--accent-emerald);
+      font-weight: 600;
+      text-align: left;
+      padding: 0.7rem 1rem;
+      border-bottom: 2px solid var(--border-accent);
+    }
+    .overview-table td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .overview-table tr:hover td { background: rgba(16,185,129,0.03); }
+
+    /* ==================== MODEL SECTION ==================== */
+    .model-section {
+      margin-bottom: 3rem;
+      padding: 2rem 2rem 2.5rem;
+      border-radius: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      transition: border-color 0.3s;
+    }
+    .model-section:hover { border-color: var(--border-accent); }
+
+    .model-header {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .model-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .model-header h2 { font-size: 1.35rem; font-weight: 700; }
+    .model-header .stage-badge {
+      margin-left: auto;
+      font-size: 0.72rem; font-weight: 600;
+      padding: 0.25rem 0.7rem; border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .color-green .model-icon { background: rgba(16,185,129,0.12); }
+    .color-green .stage-badge { background: rgba(16,185,129,0.1); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.2); }
+    .color-cyan .model-icon { background: rgba(6,182,212,0.12); }
+    .color-cyan .stage-badge { background: rgba(6,182,212,0.1); color: var(--accent-cyan); border: 1px solid rgba(6,182,212,0.2); }
+    .color-blue .model-icon { background: rgba(59,130,246,0.12); }
+    .color-blue .stage-badge { background: rgba(59,130,246,0.1); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.2); }
+    .color-purple .model-icon { background: rgba(139,92,246,0.12); }
+    .color-purple .stage-badge { background: rgba(139,92,246,0.1); color: var(--accent-purple); border: 1px solid rgba(139,92,246,0.2); }
+    .color-amber .model-icon { background: rgba(245,158,11,0.12); }
+    .color-amber .stage-badge { background: rgba(245,158,11,0.1); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.2); }
+
+    /* ==================== SUBSECTION ==================== */
+    .subsection { margin-top: 1.6rem; }
+    .subsection h3 {
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.6rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .subsection h3::before {
+      content: '';
+      width: 4px; height: 18px;
+      border-radius: 2px;
+      background: var(--accent-emerald);
+      flex-shrink: 0;
+    }
+    .subsection p, .subsection li {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      line-height: 1.75;
+    }
+    .subsection ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+    .subsection li { margin-bottom: 0.3rem; }
+
+    /* ==================== FORMULA BOX ==================== */
+    .formula-box {
+      background: var(--bg-formula);
+      border: 1px solid var(--border-accent);
+      border-left: 3px solid var(--accent-emerald);
+      border-radius: 10px;
+      padding: 1.2rem 1.5rem;
+      margin: 0.8rem 0;
+      overflow-x: auto;
+    }
+    .formula-box .katex-display { margin: 0.5rem 0; }
+    .formula-box .formula-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-emerald);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ==================== SYMBOL TABLE ==================== */
+    .symbol-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.8rem 0;
+      font-size: 0.85rem;
+    }
+    .symbol-table th {
+      text-align: left;
+      padding: 0.5rem 0.8rem;
+      background: rgba(16,185,129,0.05);
+      color: var(--accent-emerald);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .symbol-table td {
+      padding: 0.45rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+    .symbol-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      white-space: nowrap;
+      width: 160px;
+    }
+
+    /* ==================== EXPLAIN BOX ==================== */
+    .explain-box {
+      background: rgba(6,182,212,0.04);
+      border: 1px solid rgba(6,182,212,0.12);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin: 0.8rem 0;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .explain-box strong { color: var(--accent-cyan); }
+    .explain-box::before {
+      content: '💡';
+      margin-right: 0.5rem;
+    }
+
+    /* ==================== FLOW SUMMARY ==================== */
+    .flow-summary {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+    .flow-node {
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      font-size: 0.82rem; font-weight: 600;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .flow-arrow { color: var(--text-dim); font-size: 1.2rem; display: flex; align-items: center; }
+
+    /* ==================== FOOTER ==================== */
+    .page-footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .page-wrapper { padding: 1rem; }
+      .model-section { padding: 1.2rem; }
+      .hero-header { padding: 2rem 1rem; }
+      .toc { display: none; }
+      .formula-box { padding: 0.8rem; }
+    }
+
+    /* KaTeX color override for dark theme */
+    .katex { color: var(--text-primary); font-size: 1.05em; }
+  </style>
+</head>
+<body>
+
+  <!-- TOC dots -->
+  <nav class="toc" id="toc">
+    <a href="#sec-overview" data-label="Tổng quan"></a>
+    <a href="#sec-whisper" data-label="Whisper"></a>
+    <a href="#sec-llm" data-label="LLM"></a>
+    <a href="#sec-yolo" data-label="YOLOv8"></a>
+    <a href="#sec-slam" data-label="SLAM"></a>
+    <a href="#sec-astar" data-label="A*"></a>
+    <a href="#sec-dwa" data-label="DWA"></a>
+    <a href="#sec-vln" data-label="VLN"></a>
+    <a href="#sec-feedback" data-label="Feedback"></a>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <!-- ============ HERO ============ -->
+    <header class="hero-header">
+      <div class="hero-badge"><span class="dot"></span> VLN AgriBot — Nghiên Cứu 2026</div>
+      <h1>Mô Hình <span>Toán Học</span><br>Trong Hệ Thống</h1>
+      <p>Phân tích chi tiết 8 mô hình / thuật toán được áp dụng trong từng khâu của pipeline AI — từ giọng nói đến hành động vật lý.</p>
+    </header>
+
+    <!-- ============ OVERVIEW ============ -->
+    <section id="sec-overview">
+      <table class="overview-table">
+        <thead>
+          <tr><th>#</th><th>Khâu</th><th>Mô hình</th><th>Loại toán</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Speech-to-Text</td><td><strong>Whisper</strong> (Transformer)</td><td>Fourier, Attention</td></tr>
+          <tr><td>2</td><td>NLU + Planning</td><td><strong>LLM</strong> (GPT / LLaMA)</td><td>Attention, Softmax</td></tr>
+          <tr><td>3</td><td>Object Detection</td><td><strong>YOLOv8</strong> (CNN)</td><td>Convolution, IoU Loss</td></tr>
+          <tr><td>4</td><td>Localization & Mapping</td><td><strong>EKF-SLAM</strong></td><td>Bayes, Kalman Filter</td></tr>
+          <tr><td>5</td><td>Path Planning</td><td><strong>A*</strong></td><td>Đồ thị, Heuristic</td></tr>
+          <tr><td>6</td><td>Motion Control</td><td><strong>DWA</strong></td><td>Không gian vận tốc</td></tr>
+          <tr><td>7</td><td>VLN Navigation</td><td><strong>Cross-Modal Attention</strong></td><td>Attention đa phương thức</td></tr>
+          <tr><td>8</td><td>Feedback Loop</td><td><strong>Logic đánh giá</strong></td><td>Threshold, Thống kê</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!--  1. WHISPER                                                          -->
+    <!-- ==================================================================== -->
+    <section class="model-section color-green" id="sec-whisper">
+      <div class="model-header">
+        <div class="model-icon">🎤</div>
+        <div><h2>Whisper — Speech-to-Text</h2></div>
+        <span class="stage-badge">Khâu 1</span>
+      </div>
+
+      <p style="color:var(--text-secondary); font-size:0.92rem;">Whisper là mô hình <strong>Encoder-Decoder Transformer</strong> của OpenAI, nhận tín hiệu âm thanh và sinh ra chuỗi văn bản tiếng Việt.</p>
+
+      <!-- STFT -->
+      <div class="subsection">
+        <h3>Short-Time Fourier Transform (STFT)</h3>
+        <p>Tín hiệu âm thanh thô được chia thành các frame ngắn 25ms, mỗi frame biến đổi Fourier để tách phổ tần số:</p>
+        <div class="formula-box">
+          <div class="formula-label">Công thức STFT</div>
+          $$X(t, f) = \sum_{n=0}^{N-1} x(n) \cdot w(n - t) \cdot e^{-j2\pi fn/N}$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Ký hiệu</th><th>Ý nghĩa</th></tr>
+          <tr><td>$x(n)$</td><td>Tín hiệu âm thanh tại mẫu $n$</td></tr>
+          <tr><td>$w(n)$</td><td>Hàm cửa sổ Hann — giảm hiện tượng rò rỉ phổ</td></tr>
+          <tr><td>$t$</td><td>Vị trí thời gian của frame</td></tr>
+          <tr><td>$f$</td><td>Tần số</td></tr>
+          <tr><td>$N$</td><td>Kích thước FFT (thường 400 cho window 25ms)</td></tr>
+        </table>
+      </div>
+
+      <!-- Mel Scale -->
+      <div class="subsection">
+        <h3>Thang Mel & Log-Mel Spectrogram</h3>
+        <p>Thang Mel mô phỏng cách tai người cảm nhận — nhạy tần số thấp, ít nhạy tần số cao:</p>
+        <div class="formula-box">
+          <div class="formula-label">Chuyển đổi tần số → Mel</div>
+          $$\text{mel}(f) = 2595 \cdot \log_{10}\!\left(1 + \frac{f}{700}\right)$$
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Log-Mel Spectrogram</div>
+          $$S_{\text{mel}}(t, m) = \log\!\left(\sum_{f} |X(t,f)|^2 \cdot M(m, f) \;+\; \varepsilon\right)$$
+        </div>
+        <div class="explain-box">$\varepsilon$ là hằng số rất nhỏ tránh $\log(0)$. Kết quả là ma trận 2D <strong>(thời gian × 80 kênh Mel)</strong> — "hình ảnh âm thanh" làm đầu vào cho Transformer.</div>
+      </div>
+
+      <!-- Attention -->
+      <div class="subsection">
+        <h3>Self-Attention (Encoder)</h3>
+        <div class="formula-box">
+          <div class="formula-label">Scaled Dot-Product Attention</div>
+          $$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Ký hiệu</th><th>Ý nghĩa</th></tr>
+          <tr><td>$Q = XW_Q$</td><td>Ma trận <strong>Query</strong> — "câu hỏi" mỗi vị trí đặt ra</td></tr>
+          <tr><td>$K = XW_K$</td><td>Ma trận <strong>Key</strong> — "chìa khóa" để so sánh</td></tr>
+          <tr><td>$V = XW_V$</td><td>Ma trận <strong>Value</strong> — thông tin thực tế cần lấy</td></tr>
+          <tr><td>$\sqrt{d_k}$</td><td>Hệ số scale ổn định gradient</td></tr>
+        </table>
+        <div class="explain-box">Khi nông dân nói <em>"Hãy đi kiểm tra khu vực A"</em>, Self-Attention cho phép mô hình phân biệt phoneme tiếng Việt và tách khỏi nhiễu nền quạt nhà kính.</div>
+      </div>
+
+      <!-- Decoder -->
+      <div class="subsection">
+        <h3>Decoder — Sinh văn bản</h3>
+        <div class="formula-box">
+          <div class="formula-label">Xác suất có điều kiện</div>
+          $$P(y_1, y_2, \dots, y_T) = \prod_{t=1}^{T} P\!\left(y_t \mid y_1, \dots, y_{t-1},\; \mathbf{h}_{\text{enc}}\right)$$
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Cross-Attention (Decoder ↔ Encoder)</div>
+          $$\text{CrossAttn}(Q_{\text{dec}}, K_{\text{enc}}, V_{\text{enc}}) = \text{softmax}\!\left(\frac{Q_{\text{dec}}\, K_{\text{enc}}^\top}{\sqrt{d_k}}\right) V_{\text{enc}}$$
+        </div>
+        <div class="explain-box">Decoder "nhìn lại" đặc trưng âm thanh từ Encoder. Sau khi sinh <em>"Hãy đi kiểm tra"</em>, Cross-Attention tập trung vào phần spectrogram chứa âm <strong>"khu vực A"</strong> để sinh đúng từ tiếp theo.</div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!--  2. LLM                                                              -->
+    <!-- ==================================================================== -->
+    <section class="model-section color-cyan" id="sec-llm">
+      <div class="model-header">
+        <div class="model-icon">🧠</div>
+        <div><h2>LLM (GPT / LLaMA) — Hiểu Ý Định</h2></div>
+        <span class="stage-badge">Khâu 2</span>
+      </div>
+
+      <div class="subsection">
+        <h3>Causal Self-Attention</h3>
+        <p>Decoder-Only Transformer chỉ nhìn các token trước (autoregressive):</p>
+        <div class="formula-box">
+          <div class="formula-label">Causal Attention</div>
+          $$\text{CausalAttn}(Q,K,V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}} + M_{\text{causal}}\right) V$$
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Causal Mask</div>
+          $$M_{\text{causal}}[i,j] = \begin{cases} 0 & \text{nếu } j \le i \\ -\infty & \text{nếu } j > i \end{cases}$$
+        </div>
+        <div class="explain-box">Mask $-\infty$ sau softmax trở thành 0, ngăn token "nhìn trước tương lai" — đảm bảo sinh tuần tự.</div>
+      </div>
+
+      <div class="subsection">
+        <h3>Multi-Head Attention</h3>
+        <div class="formula-box">
+          $$\text{MultiHead}(Q,K,V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)\, W^O$$
+          $$\text{head}_i = \text{Attention}(QW_i^Q,\; KW_i^K,\; VW_i^V)$$
+        </div>
+        <div class="explain-box">Nhiều "đầu" attention đồng thời phân tích: <strong>Head 1</strong> → ý định ("kiểm tra"), <strong>Head 2</strong> → vị trí ("khu vực A"), <strong>Head 3</strong> → đối tượng ("cây"), <strong>Head 4</strong> → phạm vi ("toàn bộ").</div>
+      </div>
+
+      <div class="subsection">
+        <h3>Feed-Forward Network & GELU</h3>
+        <div class="formula-box">
+          $$\text{FFN}(x) = \text{GELU}(xW_1 + b_1)\,W_2 + b_2$$
+          $$\text{GELU}(x) = x \cdot \Phi(x) = x \cdot \tfrac{1}{2}\!\left[1 + \text{erf}\!\left(\tfrac{x}{\sqrt{2}}\right)\right]$$
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Cross-Entropy Loss & Softmax</h3>
+        <div class="formula-box">
+          <div class="formula-label">Hàm mất mát</div>
+          $$\mathcal{L} = -\sum_{t=1}^{T} \log P(y_t^* \mid y_1^*, \dots, y_{t-1}^*,\; X)$$
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Softmax</div>
+          $$P(y_t = w_i) = \frac{e^{z_i}}{\displaystyle\sum_{j=1}^{|V|} e^{z_j}}$$
+        </div>
+        <div class="explain-box">$|V|$ là kích thước vocabulary. Softmax chuyển logits thô thành <strong>phân phối xác suất</strong> để chọn token tiếp theo — sinh ra JSON Action Script.</div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!--  3. YOLOv8                                                           -->
+    <!-- ==================================================================== -->
+    <section class="model-section color-blue" id="sec-yolo">
+      <div class="model-header">
+        <div class="model-icon">👁️</div>
+        <div><h2>YOLOv8 — Phát Hiện Đối Tượng</h2></div>
+        <span class="stage-badge">Khâu 3</span>
+      </div>
+
+      <div class="subsection">
+        <h3>Convolution 2D</h3>
+        <div class="formula-box">
+          $$(I * K)(x, y) = \sum_{i}\sum_{j} I(x+i,\; y+j) \cdot K(i, j)$$
+        </div>
+        <div class="explain-box">
+          Kernel $K$ quét trên ảnh $I$ từ Camera RGB-D. Layer đầu trích xuất cạnh, góc; layer sâu nhận diện kết cấu lá, hình dạng quả cà chua, đốm bệnh.
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Batch Normalization</h3>
+        <div class="formula-box">
+          $$\hat{x}_i = \frac{x_i - \mu_B}{\sqrt{\sigma_B^2 + \varepsilon}} \qquad\longrightarrow\qquad y_i = \gamma\,\hat{x}_i + \beta$$
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Loss Function tổng hợp</h3>
+        <div class="formula-box">
+          <div class="formula-label">Total Loss</div>
+          $$\mathcal{L}_{\text{total}} = \lambda_{\text{cls}} \cdot \mathcal{L}_{\text{cls}} + \lambda_{\text{box}} \cdot \mathcal{L}_{\text{box}} + \lambda_{\text{dfl}} \cdot \mathcal{L}_{\text{dfl}}$$
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>CIoU Loss (Complete IoU)</h3>
+        <div class="formula-box">
+          <div class="formula-label">CIoU</div>
+          $$\mathcal{L}_{\text{CIoU}} = 1 - \text{IoU} + \frac{\rho^2(\mathbf{b},\, \mathbf{b}^{gt})}{c^2} + \alpha\, v$$
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">IoU cơ bản</div>
+          $$\text{IoU} = \frac{|B_{\text{pred}} \cap B_{\text{gt}}|}{|B_{\text{pred}} \cup B_{\text{gt}}|}$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Ký hiệu</th><th>Ý nghĩa</th></tr>
+          <tr><td>$\rho(\mathbf{b}, \mathbf{b}^{gt})$</td><td>Khoảng cách Euclid giữa tâm predicted box và ground truth</td></tr>
+          <tr><td>$c$</td><td>Đường chéo hình chữ nhật nhỏ nhất bao cả 2 box</td></tr>
+          <tr><td>$v$</td><td>Hệ số tỷ lệ khung hình: $v = \frac{4}{\pi^2}\!\left(\arctan\frac{w^{gt}}{h^{gt}} - \arctan\frac{w}{h}\right)^2$</td></tr>
+          <tr><td>$\alpha$</td><td>Trọng số cân bằng: $\alpha = \frac{v}{(1-\text{IoU})+v}$</td></tr>
+        </table>
+        <div class="explain-box">CIoU giúp bounding box <strong>"ôm khít"</strong> đối tượng — khi robot quét lá bệnh cà chua, khung phát hiện chính xác giúp xác định đúng vị trí để phun thuốc.</div>
+      </div>
+
+      <div class="subsection">
+        <h3>Distribution Focal Loss (DFL)</h3>
+        <div class="formula-box">
+          $$\mathcal{L}_{\text{DFL}} = -\Big[(y_{i+1}-y)\log(S_i) + (y-y_i)\log(S_{i+1})\Big]$$
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Non-Maximum Suppression (NMS)</h3>
+        <p>Loại bỏ box trùng lặp sau detection:</p>
+        <ol style="color:var(--text-secondary); font-size:0.9rem; padding-left:1.2rem;">
+          <li>Sắp xếp boxes theo confidence giảm dần</li>
+          <li>Chọn box có confidence cao nhất</li>
+          <li>Loại bỏ các box có IoU > 0.45 với box đã chọn</li>
+          <li>Lặp lại cho đến hết</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!--  4. SLAM                                                             -->
+    <!-- ==================================================================== -->
+    <section class="model-section color-purple" id="sec-slam">
+      <div class="model-header">
+        <div class="model-icon">🗺️</div>
+        <div><h2>EKF-SLAM — Định Vị & Lập Bản Đồ</h2></div>
+        <span class="stage-badge">Khâu 3</span>
+      </div>
+
+      <div class="subsection">
+        <h3>Mô hình chuyển động (Motion Model)</h3>
+        <div class="formula-box">
+          <div class="formula-label">Phương trình tổng quát</div>
+          $$\mathbf{x}_t = f(\mathbf{x}_{t-1},\, \mathbf{u}_t) + \mathbf{w}_t$$
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Differential Drive Robot</div>
+          $$\begin{bmatrix} x_t \\ y_t \\ \theta_t \end{bmatrix} = \begin{bmatrix} x_{t-1} + v\,\Delta t\,\cos(\theta_{t-1}) \\ y_{t-1} + v\,\Delta t\,\sin(\theta_{t-1}) \\ \theta_{t-1} + \omega\,\Delta t \end{bmatrix}$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Ký hiệu</th><th>Ý nghĩa</th></tr>
+          <tr><td>$\mathbf{x}_t = (x, y, \theta)$</td><td>Trạng thái robot: vị trí + hướng</td></tr>
+          <tr><td>$v,\;\omega$</td><td>Vận tốc tuyến tính và vận tốc góc</td></tr>
+          <tr><td>$\mathbf{w}_t$</td><td>Nhiễu quá trình $\sim \mathcal{N}(0, Q_t)$</td></tr>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Mô hình quan sát (Observation Model)</h3>
+        <div class="formula-box">
+          $$\mathbf{z}_t = h(\mathbf{x}_t,\, \mathbf{m}) + \mathbf{v}_t$$
+        </div>
+        <div class="explain-box">$\mathbf{z}_t$ là dữ liệu từ Camera RGB-D, $\mathbf{m}$ là bản đồ landmark, $\mathbf{v}_t$ là nhiễu cảm biến $\sim \mathcal{N}(0, R_t)$.</div>
+      </div>
+
+      <div class="subsection">
+        <h3>EKF — Bước Predict</h3>
+        <div class="formula-box">
+          $$\hat{\mathbf{x}}_t^{-} = f(\hat{\mathbf{x}}_{t-1},\, \mathbf{u}_t)$$
+          $$P_t^{-} = F_t\, P_{t-1}\, F_t^\top + Q_t$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Ký hiệu</th><th>Ý nghĩa</th></tr>
+          <tr><td>$\hat{\mathbf{x}}_t^{-}$</td><td>Ước lượng tiên nghiệm (prior)</td></tr>
+          <tr><td>$P_t^{-}$</td><td>Ma trận hiệp phương sai tiên nghiệm</td></tr>
+          <tr><td>$F_t = \frac{\partial f}{\partial \mathbf{x}}$</td><td>Jacobian mô hình chuyển động</td></tr>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>EKF — Bước Update</h3>
+        <div class="formula-box">
+          <div class="formula-label">Kalman Gain</div>
+          $$K_t = P_t^{-}\, H_t^\top \left(H_t\, P_t^{-}\, H_t^\top + R_t\right)^{-1}$$
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Cập nhật trạng thái</div>
+          $$\hat{\mathbf{x}}_t = \hat{\mathbf{x}}_t^{-} + K_t\!\left(\mathbf{z}_t - h(\hat{\mathbf{x}}_t^{-},\, \mathbf{m})\right)$$
+          $$P_t = (I - K_t\, H_t)\, P_t^{-}$$
+        </div>
+        <div class="explain-box">Khi robot di chuyển trong nhà kính, vị trí ước lượng "trôi" do sai số tích lũy. Khi camera nhìn thấy cột nhà kính (landmark), <strong>Kalman Gain $K_t$</strong> "kéo" ước lượng về đúng vị trí — cân bằng giữa tin vào mô hình và tin vào cảm biến.</div>
+      </div>
+
+      <div class="subsection">
+        <h3>Occupancy Grid Map</h3>
+        <div class="formula-box">
+          $$P(m_i \mid z_{1:t}, x_{1:t}) = \frac{1}{1 + e^{-l_i}}$$
+          $$l_i = l_{i,\text{prev}} + \log\frac{P(m_i \mid z_t)}{1 - P(m_i \mid z_t)} - l_0$$
+        </div>
+        <div class="explain-box">Mỗi ô lưới: <strong>0 = trống</strong> (lối đi), <strong>1 = chiếm</strong> (cột, luống cây), <strong>0.5 = chưa biết</strong>. Robot quét nhiều lần → xác suất cập nhật chính xác hơn.</div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!--  5. A*                                                               -->
+    <!-- ==================================================================== -->
+    <section class="model-section color-amber" id="sec-astar">
+      <div class="model-header">
+        <div class="model-icon">🧭</div>
+        <div><h2>A* — Path Planning</h2></div>
+        <span class="stage-badge">Khâu 4</span>
+      </div>
+
+      <div class="subsection">
+        <h3>Hàm đánh giá</h3>
+        <div class="formula-box">
+          <div class="formula-label">Hàm tổng chi phí</div>
+          $$f(n) = g(n) + h(n)$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Ký hiệu</th><th>Ý nghĩa</th></tr>
+          <tr><td>$f(n)$</td><td>Tổng chi phí ước lượng qua node $n$</td></tr>
+          <tr><td>$g(n)$</td><td>Chi phí <strong>thực tế</strong> từ điểm xuất phát đến $n$</td></tr>
+          <tr><td>$h(n)$</td><td><strong>Heuristic</strong> — ước lượng từ $n$ đến đích</td></tr>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Heuristic — Euclidean Distance</h3>
+        <div class="formula-box">
+          $$h(n) = \sqrt{(x_n - x_{\text{goal}})^2 + (y_n - y_{\text{goal}})^2}$$
+        </div>
+        <div class="explain-box">Euclidean heuristic không bao giờ overestimate → A* <strong>đảm bảo tìm đường tối ưu</strong>. Robot tìm đường đến hàng cây cần kiểm tra, tránh cột nhà kính và ống tưới.</div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!--  6. DWA                                                              -->
+    <!-- ==================================================================== -->
+    <section class="model-section color-purple" id="sec-dwa">
+      <div class="model-header">
+        <div class="model-icon">🚗</div>
+        <div><h2>DWA — Dynamic Window Approach</h2></div>
+        <span class="stage-badge">Khâu 4</span>
+      </div>
+
+      <div class="subsection">
+        <h3>Cửa sổ tìm kiếm vận tốc</h3>
+        <div class="formula-box">
+          <div class="formula-label">Giao 3 ràng buộc</div>
+          $$V_r = V_s \;\cap\; V_d \;\cap\; V_a$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Tập hợp</th><th>Ý nghĩa</th></tr>
+          <tr><td>$V_s$</td><td>Giới hạn vận tốc vật lý: $v \in [0, v_{\max}]$, $\omega \in [-\omega_{\max}, \omega_{\max}]$</td></tr>
+          <tr><td>$V_d$</td><td>Ràng buộc gia tốc: $v \in [v_c \pm \dot{v}_{\max}\Delta t]$</td></tr>
+          <tr><td>$V_a$</td><td>An toàn: $v \le \sqrt{2 \cdot \text{dist}(v,\omega) \cdot \dot{v}_{\max}}$</td></tr>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Hàm mục tiêu</h3>
+        <div class="formula-box">
+          $$G(v, \omega) = \sigma\!\Big(\alpha \cdot \text{heading}(v,\omega) + \beta \cdot \text{dist}(v,\omega) + \gamma \cdot \text{vel}(v,\omega)\Big)$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Thành phần</th><th>Ý nghĩa</th></tr>
+          <tr><td>$\text{heading}$</td><td>Góc lệch so với hướng đích — <strong>nhỏ = tốt</strong></td></tr>
+          <tr><td>$\text{dist}$</td><td>Khoảng cách đến vật cản gần nhất — <strong>xa = tốt</strong></td></tr>
+          <tr><td>$\text{vel}$</td><td>Vận tốc tuyến tính — <strong>nhanh = tốt</strong></td></tr>
+          <tr><td>$\alpha, \beta, \gamma$</td><td>Trọng số. Trong nhà kính, $\beta$ cao vì lối đi hẹp</td></tr>
+        </table>
+        <div class="formula-box">
+          <div class="formula-label">Chọn vận tốc tối ưu</div>
+          $$(v^*, \omega^*) = \arg\max_{(v,\omega) \in V_r}\; G(v, \omega)$$
+        </div>
+        <div class="explain-box">DWA chạy <strong>10–20Hz</strong>, mỗi chu kỳ mô phỏng hàng trăm cặp $(v, \omega)$, chọn cặp tốt nhất để robot di chuyển an toàn giữa các luống cà chua.</div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!--  7. VLN                                                              -->
+    <!-- ==================================================================== -->
+    <section class="model-section color-cyan" id="sec-vln">
+      <div class="model-header">
+        <div class="model-icon">🔗</div>
+        <div><h2>VLN — Cross-Modal Attention</h2></div>
+        <span class="stage-badge">Khâu 4</span>
+      </div>
+
+      <div class="subsection">
+        <h3>Bài toán VLN</h3>
+        <div class="formula-box">
+          $$a_t = \pi\!\left(a \;\big|\; L,\; V_t,\; h_{t-1}\right)$$
+        </div>
+        <table class="symbol-table">
+          <tr><th>Ký hiệu</th><th>Ý nghĩa</th></tr>
+          <tr><td>$a_t$</td><td>Hành động tại bước $t$ (rẽ trái, đi thẳng, dừng...)</td></tr>
+          <tr><td>$L$</td><td>Biểu diễn ngôn ngữ (embedding câu lệnh)</td></tr>
+          <tr><td>$V_t$</td><td>Biểu diễn thị giác tại bước $t$</td></tr>
+          <tr><td>$h_{t-1}$</td><td>Hidden state — bộ nhớ các bước trước</td></tr>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3>Language-conditioned Visual Attention</h3>
+        <div class="formula-box">
+          $$\alpha_t^k = \text{softmax}\!\left(\frac{(h_{t-1} W_Q)(v_t^k W_K)^\top}{\sqrt{d}}\right)$$
+          $$\tilde{v}_t = \sum_{k=1}^{K} \alpha_t^k \cdot v_t^k$$
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Vision-conditioned Language Attention</h3>
+        <div class="formula-box">
+          $$\beta_t^i = \text{softmax}\!\left(\frac{(\tilde{v}_t\, W_{Q'})(\, l_i\, W_{K'})^\top}{\sqrt{d}}\right)$$
+          $$\tilde{l}_t = \sum_{i=1}^{n} \beta_t^i \cdot l_i$$
+        </div>
+        <div class="explain-box">
+          Khi câu lệnh là <em>"đi đến khu vực A"</em> và robot thấy biển "Zone A" ở bên trái:
+          <strong>Visual attention $\alpha_t^k$</strong> → trọng số cao cho hướng nhìn chứa biển.
+          <strong>Language attention $\beta_t^i$</strong> → trọng số cao cho từ "khu vực A".
+          → Kết hợp → Quyết định: <strong>rẽ trái</strong>.
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Action Prediction</h3>
+        <div class="formula-box">
+          $$h_t = \text{LSTM}\!\left(h_{t-1},\; [\tilde{v}_t \;;\; \tilde{l}_t \;;\; a_{t-1}]\right)$$
+          $$P(a_t = a^j) = \text{softmax}\!\left(h_t^\top\, c^j\right)$$
+        </div>
+        <div class="explain-box">$c^j$ là embedding ứng viên hành động (forward, left, right, stop). LSTM duy trì bộ nhớ → robot "nhớ" đã thăm hàng nào.</div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!--  8. FEEDBACK                                                         -->
+    <!-- ==================================================================== -->
+    <section class="model-section color-green" id="sec-feedback">
+      <div class="model-header">
+        <div class="model-icon">📡</div>
+        <div><h2>Feedback Loop — Đánh Giá Kết Quả</h2></div>
+        <span class="stage-badge">Khâu 5</span>
+      </div>
+
+      <div class="subsection">
+        <h3>Coverage Metric</h3>
+        <div class="formula-box">
+          $$\text{Coverage} = \frac{N_{\text{scanned}}}{N_{\text{total}}} \times 100\%$$
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Task Completion</h3>
+        <div class="formula-box">
+          $$\text{Success} = \begin{cases} \text{TRUE} & \text{nếu Coverage} \ge \tau \;\text{AND}\; \text{AllSubTasksDone} \\ \text{FALSE} & \text{ngược lại → quay lại Khâu 2} \end{cases}$$
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Plant Health Score</h3>
+        <div class="formula-box">
+          $$\text{HealthScore}_{\text{zone}} = \frac{N_{\text{healthy}}}{N_{\text{total}}} \times 100\%$$
+        </div>
+        <div class="explain-box">
+          <strong>Ví dụ:</strong> Zone A → 438/450 = 97.3% khỏe mạnh, 12/450 = 2.7% bất thường → đưa vào báo cáo cho nông dân.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FLOW SUMMARY ============ -->
+    <section style="margin-top: 2rem;">
+      <h2 style="text-align:center; margin-bottom:1.5rem; font-size:1.3rem;">🔑 Mối Liên Hệ Giữa Các Mô Hình</h2>
+      <div class="flow-summary">
+        <div class="flow-node" style="background:rgba(16,185,129,0.08); border-color:rgba(16,185,129,0.2);">🎤 Whisper</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:rgba(6,182,212,0.08); border-color:rgba(6,182,212,0.2);">🧠 LLM</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:rgba(59,130,246,0.08); border-color:rgba(59,130,246,0.2);">👁️ YOLOv8 + SLAM</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:rgba(139,92,246,0.08); border-color:rgba(139,92,246,0.2);">🧭 VLN + A* + DWA</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:rgba(16,185,129,0.08); border-color:rgba(16,185,129,0.2);">📡 Feedback</div>
+      </div>
+      <p style="text-align:center; color:var(--text-dim); font-size:0.88rem; margin-top:0.5rem;">Đầu ra của mỗi mô hình trở thành đầu vào cho mô hình tiếp theo — tạo nên pipeline AI hoàn chỉnh.</p>
+    </section>
+
+    <footer class="page-footer">
+      <p>© 2026 VLN AgriBot Research Project — Mô Hình Toán Học | Việt Nam 🇻🇳</p>
+    </footer>
+
+  </div>
+
+  <!-- TOC active state script -->
+  <script>
+    const tocLinks = document.querySelectorAll('.toc a');
+    const secs = document.querySelectorAll('[id^="sec-"]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      secs.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 200) current = s.id;
+      });
+      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+    });
+  </script>
+</body>
+</html>
