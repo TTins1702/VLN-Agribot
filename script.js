@@ -53,8 +53,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 // ===== Counter animation =====
-function animateCounters() {
-  document.querySelectorAll('.stat-value[data-count]').forEach(el => {
+function animateCountersIn(container) {
+  container.querySelectorAll('.stat-value[data-count]').forEach(el => {
+    if (el.dataset.animated) return;
+    el.dataset.animated = 'true';
     const target = parseInt(el.dataset.count);
     const suffix = el.dataset.suffix || '';
     let current = 0;
@@ -67,7 +69,6 @@ function animateCounters() {
   });
 }
 const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { animateCounters(); counterObserver.disconnect(); } });
+  entries.forEach(e => { if (e.isIntersecting) animateCountersIn(e.target); });
 }, { threshold: 0.3 });
-const conclusionSection = document.querySelector('#conclusion');
-if (conclusionSection) counterObserver.observe(conclusionSection);
+document.querySelectorAll('#benefits, #conclusion').forEach(s => counterObserver.observe(s));
